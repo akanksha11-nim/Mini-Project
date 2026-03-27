@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto-Filled Resume</title>
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f2f2f2;
+  margin: 30px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+* {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+#resume {
+  width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  height: 100px;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #4A148C;
+  margin-top: 15px;
+  border-bottom: 2px solid #4A148C;
+  padding-bottom: 5px;
+}
+
+.left-box { width: 30%; background: #f3eefc; padding: 20px; border-radius: 10px; }
+.right-box { width: 65%; padding: 20px; }
+.resume-container { display: flex; gap: 40px; }
+
+.resume {
+  width: 210mm;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 1mm;
+  background: #fff;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 0.8fr 2fr;
+  overflow: hidden;
+}
+
+.sidebar { background-color: #f4f2fa; padding: 2px 2px; color: #333; border-right: 2px solid #ece9f5; }
+
+.profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 5px auto;
+  border: 2px solid #7c3aed;
+}
+
+.profile-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.sidebar h1 { text-align: center; font-size: 16px; color: #4c1d95; margin: 3px 0 2px 0; }
+.sidebar p { text-align: center; font-size: 12px; color: #666; margin: 1px 0; }
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4c1d95;
+  border-bottom: 2px solid #7c3aed;
+  margin: 5px 0 3px 0;
+  padding-bottom: 2px;
+}
+
+ul { list-style-type: none; padding-left: 0; margin: 0; }
+ul li { margin: 2px 0; color: #333; font-size: 12px; }
+
+.main { padding: 2px 3px; }
+.main h2 { font-size: 14px; font-weight: 600; color: #4c1d95; border-bottom: 2px solid #7c3aed; padding-bottom: 2px; margin-bottom: 3px; }
+
+.main p, .main li { font-size: 12px; color: #333; line-height: 1.3; }
+.project, .education-item, .internship { margin-bottom: 3px; }
+.project-title { font-weight: 600; color: #222; }
+
+#downloadBtn {
+  margin: 1px auto 0;
+  display: block;
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#downloadBtn:hover { background-color: #5b21b6; }
+
+/* --------------------------------------------------- */
+/*                RESPONSIVE DESIGN ADDED              */
+/* --------------------------------------------------- */
+
+/* Tablet Screens */
+@media (max-width: 1024px) {
+  body { margin: 10px; }
+  .resume { grid-template-columns: 1fr 2fr; width: 100%; }
+}
+
+/* Mobile Screens */
+@media (max-width: 768px) {
+  .resume {
+    grid-template-columns: 1fr;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 2px solid #ece9f5;
+  }
+
+  .profile-pic {
+    width: 90px;
+    height: 90px;
+  }
+
+  .sidebar h1 { font-size: 20px; }
+  .sidebar p { font-size: 14px; }
+
+  .main h2 { font-size: 16px; }
+  .main p, .main li { font-size: 14px; }
+}
+
+/* Extra Small Screens */
+@media (max-width: 480px) {
+  .resume { padding: 5px; }
+  #downloadBtn { width: 90%; font-size: 16px; }
+}
+
+</style>
+
+
+</head>
+<body>
+  <div class="content">
+
+  <div class="resume">
+  <div class="sidebar">
+    <div class="profile-pic">
+      <img id="profile_photo" src="" alt="Profile Photo" />
+    </div>
+    <h1 id="name" style="font-size: 26px;"></h1>
+    <p id="email"></p>
+    <p id="phone"></p>
+    <p id="address"></p>
+
+    <div class="section">
+      <h3 class="section-title" style="font-size: 20px;">Skills</h3>
+      <ul id="skills"></ul>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title" style="font-size: 20px;">Strengths</h3>
+      <ul id="strengths"></ul>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="section">
+      <h2 style="font-size: 20px;">Profile Summary</h2>
+      <p id="profile_summary"></p>
+    </div>
+
+    <div class="section">
+      <h2 style="font-size: 20px;">Education</h2>
+      <div id="education"></div>
+    </div>
+
+    <div class="section">
+      <h2 style="font-size: 20px;">Projects</h2>
+      <div id="projects"></div>
+    </div>
+
+    <div class="section">
+      <h2 style="font-size: 20px;">Internships</h2>
+      <div id="internships">
+        <p></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 style="font-size: 20px;">Achievements</h2>
+      <ul id="achievements"></ul>
+    </div>
+  </div>
+</div>
+<button id="downloadBtn">Download Resume as PDF</button>
+<br>
+<br>
+
+
+ 
+  </div>
+  
+
+  <script>
+    // Fetch student data by student_id
+   const studentId = localStorage.getItem("student_id");
+   fetch(`http://localhost:8000/get_resume_data/${studentId}`)
+
+      .then(res => res.json())
+      .then(data => {
+        // Fill basic info
+        document.getElementById("name").innerText = data.name || "";
+        document.getElementById("email").innerText = data.email || "";
+        document.getElementById("phone").innerText = data.phone || "";
+        document.getElementById("address").innerText = data.address || "";
+       document.getElementById("profile_photo").src = data.profile_photo_base64
+  ? `data:image/jpeg;base64,${data.profile_photo_base64}`
+  : "";
+
+
+
+
+
+        // Fill lists
+        if (data.skills) {
+          document.getElementById("skills").innerHTML = data.skills.map(s => `<li>${s}</li>`).join("");
+        }
+
+        if (data.strengths) {
+          document.getElementById("strengths").innerHTML = data.strengths.map(s => `<li>${s}</li>`).join("");
+        }
+
+        if (data.education) {
+  document.getElementById("education").innerHTML = data.education.map(e => {
+
+    // Show year ONLY for degrees other than 10th/12th
+    let degreeLabel = e.degree || "";
+    if (e.degree && !e.degree.includes("10") && !e.degree.includes("12")) {
+      if (e.year) {
+        degreeLabel = `${e.degree} (${e.year})`;
+      }
+    }
+
+    // Score label
+    let scoreLabel = "";
+    if (e.degree && e.degree.toLowerCase().includes("10")) {
+      scoreLabel = e.score ? `Percentage: ${e.score}` : "";
+    } else if (e.degree && e.degree.toLowerCase().includes("12")) {
+      scoreLabel = e.score ? `Percentage: ${e.score}` : "";
+    } else {
+      scoreLabel = e.score ? `CGPA: ${e.score}` : "";
+    }
+
+    return `
+      <div class="education-item">
+        <strong>${degreeLabel}</strong><br>
+        <span>${e.institute || ""}</span><br>
+        <span>${scoreLabel}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+        if (data.profile_summary) {
+          document.getElementById("profile_summary").innerText = data.profile_summary;
+        }
+
+        if (data.projects) {
+          document.getElementById("projects").innerHTML = data.projects.map(p => `
+            <div class="project">
+              <div class="project-title">${p.title || ""}</div>
+              <p>${p.description || ""}</p><br>
+            </div>
+          `).join("");
+        }
+
+        if (data.internships) {
+          document.getElementById("internships").innerHTML = data.internships.map(i => `
+            <p><strong>${i.company || "<br>"}</strong> </p><br>
+          `).join("");
+        }
+
+        if (data.achievements) {
+          document.getElementById("achievements").innerHTML = data.achievements.map(a => `<li>${a}</li>`).join("");
+        }
+      })
+      .catch(err => console.error("Error fetching data:", err));
+
+
+      const student_Id = localStorage.getItem("student_id");
+document.getElementById("downloadBtn").addEventListener("click", async () => {
+  const resumeElement = document.querySelector(".resume");
+
+  // Wait for profile image to load fully
+  const img = document.getElementById("profile_photo");
+
+  if (img && img.src) {
+    await new Promise((resolve) => {
+      if (img.complete) resolve();
+      img.onload = resolve;
+      img.onerror = resolve;
+    });
+  }
+
+  const opt = {
+    margin: 0,
+    filename: "resume.pdf",
+    image: { type: "jpeg", quality: 1 },
+    html2canvas: {
+      scale: 2,                    // adjusted scale for better fit
+      useCORS: true,               // allow localhost image
+    },
+    jsPDF: { unit: "mm", format: [210, 297], orientation: "portrait" },
+    pagebreak: { mode: 'avoid-all' }  // avoid page breaks
+  };
+
+  html2pdf().set(opt).from(resumeElement).save();
+});
+
+
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+</html>

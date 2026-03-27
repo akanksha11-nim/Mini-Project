@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify OTP</title>
+  <style>
+    /* same CSS as yours */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 { color: #333; margin-bottom: 20px; font-size: 26px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #5563DE;
+      box-shadow: 0 0 5px rgba(85, 99, 222, 0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #5563DE;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover { background-color: #3e4abc; }
+
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #5563DE;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #3e4abc;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Verify OTP</h2>
+    <form id="otpForm">
+      <input type="text" id="otp" placeholder="Enter 6-digit OTP" required maxlength="6"><br>
+      <button type="submit">Verify OTP</button>
+    </form>
+    <a href="forget_password.html">Back to Forgot Password</a>
+  </div>
+
+  <script>
+    document.getElementById("otpForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const otp = document.getElementById("otp").value;
+      const email = localStorage.getItem("reset_email");
+
+      if (!email) {
+        alert("No email found. Please go back to forgot password.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+
+        const data = await res.json();
+        alert(data.message || "OTP verified!");
+
+        if (res.ok) {
+          localStorage.setItem("reset_token", data.reset_token);
+          window.location.href = "reset_password.html";
+        }
+      } catch (err) {
+        alert("Something went wrong. Try again later.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

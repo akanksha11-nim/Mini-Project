@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPO Dashboard</title>
+  <link rel="stylesheet" href="tpo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    body {
+      background: #f5f6fa;
+      color: #333;
+    }
+
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(to bottom, #0a4a7a, #0c7db1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100%;
+      padding: 20px 0;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+    }
+
+    .sidebar .profile {
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar .profile img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      object-fit: cover;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.collapsed .profile img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .sidebar .profile h3 {
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    .sidebar.collapsed .profile h3 {
+      display: none;
+    }
+
+    .sidebar ul li a {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 15px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .sidebar ul li a .icon {
+      width: 25px;
+      margin-right: 10px;
+      text-align: center;
+    }
+
+    .sidebar.collapsed ul li a span:not(.icon) {
+      display: none;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background: #fff;
+      color: #0c7db1;
+      border-left: 4px solid #0c7db1;
+    }
+
+    /* Section */
+    .section {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+      transition: all 0.3s ease;
+      min-height: 100vh;
+    }
+
+    .section.expanded {
+      margin-left: 70px;
+      width: calc(100% - 70px);
+    }
+
+    .top_navbar {
+      background: #fff;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .hamburger a {
+      font-size: 22px;
+      color: #0c7db1;
+      text-decoration: none;
+      cursor: pointer;
+      margin-right: 20px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .content h3 {
+      color: #0a4a7a;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .content h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #0a4a7a, #0c7db1);
+      border-radius: 2px;
+    }
+
+    /* Department Grid - 3 in first row, 2 in second row */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin-top: 30px;
+      padding: 20px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .dept-grid a {
+      text-decoration: none;
+    }
+
+    .dept-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      padding: 30px 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      font-weight: 700;
+      color: #0a4a7a;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .dept-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .dept-card:hover::before {
+      left: 100%;
+    }
+
+    .dept-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+      color: #0c7db1;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -240px;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .section {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="profile">
+        <img
+          src="https://thvnext.bing.com/th/id/OIP.4j4jNaPU3bIzDJHBj6HDSwHaHa?w=196&h=196&c=7&r=0&o=7&cb=12&dpr=1.3&pid=1.7&rm=3&ucfimg=1"
+          alt="profile_picture" />
+        <h3>TPO</h3>
+      </div>
+      <ul>
+        <li>
+          <a href="#" class="active"><span class="icon"><i class="fas fa-home"></i></span><span>Dashboard</span></a>
+        </li>
+        <li>
+          <a href="candidate_list.html"><span class="icon"><i class="fas fa-users"></i></span><span>Candidate
+              List</span></a>
+        </li>
+
+        <li>
+          <a href="login.html"><span class="icon"><i class="fas fa-sign-out-alt"></i></span><span>Logout</span></a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Section -->
+    <div class="section" id="section">
+      <div class="top_navbar">
+        <div class="hamburger">
+          <a href="#" id="sidebar_toggle"><i class="fas fa-bars"></i></a>
+        </div>
+        <h2>TPO Dashboard</h2>
+      </div>
+
+      <div class="content">
+        <h3>Select Department</h3>
+        <div class="dept-grid">
+          <a href="cse.html">
+            <div class="dept-card">Computer Science & Engineering</div>
+          </a>
+          <a href="aids.html">
+            <div class="dept-card">
+              Artificial Intelligence and Data Science
+            </div>
+          </a>
+          <a href="entc.html">
+            <div class="dept-card">Electronic & Telecommunication</div>
+          </a>
+          <a href="mech.html">
+            <div class="dept-card">Mechanical</div>
+          </a>
+          <a href="civil.html">
+            <div class="dept-card">Civil</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Sidebar Toggle Script -->
+    <script>
+      const toggleBtn = document.getElementById("sidebar_toggle");
+      const sidebar = document.getElementById("sidebar");
+      const section = document.getElementById("section");
+      const links = document.querySelectorAll(".load-page");
+      const contentArea = document.getElementById("content-area");
+
+      // Toggle sidebar collapse
+      toggleBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        sidebar.classList.toggle("collapsed");
+        section.classList.toggle("expanded");
+      });
+
+      // Load content dynamically
+      links.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          links.forEach((l) => l.classList.remove("active"));
+          this.classList.add("active");
+
+          const page = this.getAttribute("href");
+          contentArea.innerHTML =
+            "<p style='text-align:center;margin-top:20px;'>Loading...</p>";
+
+          fetch(page)
+            .then((response) => {
+              if (!response.ok) throw new Error("Page not found");
+              return response.text();
+            })
+            .then((html) => {
+              contentArea.innerHTML = html;
+            })
+            .catch(() => {
+              contentArea.innerHTML =
+                "<p style='color:red;text-align:center;'>⚠️ Error loading page.</p>";
+            });
+        });
+      });
+
+
+
+      async function matchJob() {
+        const dept = document.getElementById("deptSelect").value;
+        const desc = document.getElementById("jobDesc").value.trim();
+
+        if (!desc) {
+          alert("Please enter job description or required skills!");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/job_matching", {
+            method: "POST",
+            body: new URLSearchParams({ department: dept, job_description: desc })
+          });
+
+          if (!res.ok) throw new Error("Server error");
+
+          const data = await res.json();
+
+          const table = document.getElementById("shortlistTable");
+          table.innerHTML = "";
+
+          if (data.shortlisted.length === 0) {
+            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students matched.</td></tr>`;
+            return;
+          }
+
+          data.shortlisted.forEach((stu, i) => {
+            table.innerHTML += `<tr>
+                <td>${stu.prn}</td>
+                <td>${stu.name}</td>
+                <td>${stu.department}</td>
+                <td>${stu.match_percentage?.toFixed(1) || stu.score}</td>
+            </tr>`;
+          });
+
+        } catch (err) {
+          console.error(err);
+          alert("Error fetching shortlisted candidates.");
+        }
+      }
+
+      body: new URLSearchParams({
+        department: dept,
+        job_description: desc,
+        min_cgpa: document.getElementById("cgpaMin").value
+      })
+
+
+      function downloadAllResumes() {
+        const prns = Array.from(document.querySelectorAll("#shortlistTable tr td:first-child"))
+          .map(td => td.innerText)
+          .join(",");
+        if (!prns) return alert("No students to download!");
+        window.open(`http://127.0.0.1:8000/api/download_shortlisted_resumes/?prns=${prns}`, "_blank");
+      }
+
+
+    </script>
+</body>
+
+</html>

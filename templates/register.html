@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Register</title>
+    <style>
+      /* Page background */
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #74abe2, #5563de);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      /* Container for the form */
+      .register-container {
+        background-color: #fff;
+        padding: 40px 45px;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        width: 350px;
+      }
+
+      /* Form heading */
+      h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 25px;
+      }
+
+      /* Labels and inputs */
+      label {
+        display: block;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 6px;
+        text-align: left;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      /* Show password checkbox */
+      .show-password {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+
+      .show-password input {
+        margin-right: 6px;
+      }
+
+      /* Button styling */
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #5563de;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #3e4abc;
+      }
+
+      /* Links section */
+      .links {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .links p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .links a {
+        color: #5563de;
+        text-decoration: none;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive design */
+      @media (max-width: 450px) {
+        .register-container {
+          width: 90%;
+          padding: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="register-container">
+      <form method="POST" class="register-form">
+        <h2>Register</h2>
+
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter email"
+          required
+        />
+
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter password"
+          required
+        />
+
+        <div class="show-password">
+          <input type="checkbox" id="showPassword" />
+          <label for="showPassword">Show Password</label>
+        </div>
+
+        <button type="submit">REGISTER</button>
+
+        <div class="links">
+          <p>Already have an account? <a href="login.html">Login</a></p>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // Toggle password visibility
+      const showPass = document.getElementById("showPassword");
+      const passwordField = document.getElementById("password");
+      showPass.addEventListener("change", function () {
+        passwordField.type = this.checked ? "text" : "password";
+      });
+
+      const form = document.querySelector(".register-form");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent page reload
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch("http://127.0.0.1:8000/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          // Show popup message from backend response
+          alert(data.message || data.detail || "Something went wrong!");
+
+          if (response.ok) {
+            form.reset(); // clear form on success
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Failed to connect to server");
+        }
+      });
+    </script>
+  </body>
+</html>

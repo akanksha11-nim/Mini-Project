@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <style>
+      /* Page background */
+      body {
+        font-family: Arial, sans-serif;
+       background: linear-gradient(135deg, #74ABE2, #5563DE);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      /* Container for the form */
+      .login-container {
+        background-color: #fff;
+        padding: 40px 45px;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        width: 350px;
+        position: relative;
+      }
+
+      /* Form heading */
+      h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 25px;
+      }
+
+      /* Labels and inputs */
+      label {
+        display: block;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 6px;
+        text-align: left;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      /* Show password checkbox */
+      .show-password {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+
+      .show-password input {
+        margin-right: 6px;
+      }
+
+      /* Button styling */
+      button {
+         width: 100%;
+      padding: 12px;
+      background-color: #5563DE;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      }
+
+      button:hover { background-color: #3e4abc; }
+
+      /* Links section */
+      .links {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .links p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .links a {
+        color: #5563DE;
+        text-decoration: none;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+
+      /* Popup message styles */
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .popup.success {
+        border-top: 6px solid #28a745;
+      }
+
+      .popup.error {
+        border-top: 6px solid #dc3545;
+      }
+
+      .popup h3 {
+        margin: 0;
+        color: #333;
+      }
+
+      .popup p {
+        margin-top: 10px;
+        color: #555;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -55%);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      /* Responsive design */
+      @media (max-width: 450px) {
+        .login-container {
+          width: 90%;
+          padding: 30px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <form id="loginForm" class="login-form">
+        <h2>Login</h2>
+
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter email"
+          required
+        />
+
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter password"
+          required
+        />
+
+        <div class="show-password">
+          <input type="checkbox" id="showPassword" />
+          <label for="showPassword">Show Password</label>
+        </div>
+
+        <button type="submit">Submit</button>
+
+        <div class="links">
+          <p>
+            <a href="forget_password.html"
+              >Forgot <strong>Username</strong> / <strong>Password</strong>?</a
+            >
+          </p>
+          <p>
+            Don't have an account?
+            <a href="register.html"><strong>Register</strong></a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Popup window -->
+    <div id="popup" class="popup">
+      <h3 id="popupTitle"></h3>
+      <p id="popupMessage"></p>
+    </div>
+
+    <script>
+      // Toggle password visibility
+      const showPass = document.getElementById("showPassword");
+      const passwordField = document.getElementById("password");
+      showPass.addEventListener("change", function () {
+        passwordField.type = this.checked ? "text" : "password";
+      });
+
+      // Handle login submission
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const popup = document.getElementById("popup");
+          const popupTitle = document.getElementById("popupTitle");
+          const popupMessage = document.getElementById("popupMessage");
+
+          try {
+            // ✅ Your FastAPI login endpoint
+            const response = await fetch("http://127.0.0.1:8000/api/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              // ✅ Save student_id for future forms (if not TPO)
+              if (result.student_id) {
+                localStorage.setItem("student_id", result.student_id);
+                console.log("Saved student_id:", result.student_id);
+              }
+
+              // ✅ Show success popup
+              popup.className = "popup success";
+              popupTitle.textContent = "Login Successful!";
+              popupMessage.textContent = "Redirecting to your dashboard...";
+              popup.style.display = "block";
+
+              // Redirect based on role
+              const redirectUrl = result.role === "tpo" ? "TPO_dashbord.html" : "student_dashboard.html";
+              setTimeout(() => {
+                window.location.href = redirectUrl;
+              }, 1500);
+            } else {
+              // ❌ Login failed
+              popup.className = "popup error";
+              popupTitle.textContent = "Login Failed!";
+              popupMessage.textContent =
+                result.message ||
+                "Invalid email or password. Please try again.";
+              popup.style.display = "block";
+
+              setTimeout(() => {
+                popup.style.display = "none";
+              }, 2000);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            popup.className = "popup error";
+            popupTitle.textContent = "Error!";
+            popupMessage.textContent = "Something went wrong. Try again later.";
+            popup.style.display = "block";
+            setTimeout(() => {
+              popup.style.display = "none";
+            }, 2000);
+          }
+        });
+    </script>
+  </body>
+</html>

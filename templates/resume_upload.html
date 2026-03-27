@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Upload</title>
+  <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .containers {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+      margin-top: 80px;
+      align-items: center;
+    }
+    input[type="file"] {
+      margin: 15px 0;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    pre {
+      text-align: left;
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+     /* Popup styles */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      text-align: center;
+      z-index: 1000;
+    }
+
+    .popup button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+ 
+  <div class="containers">
+    <h2>Upload Resume (PDF)</h2>
+    <br>
+    <form action="http://127.0.0.1:8000/api/upload_resume" method="POST" enctype="multipart/form-data"  >
+    <input type="text" name="prn" placeholder="Enter PRN" required>
+    <input type="file" name="resume_file" accept=".pdf,.doc,.docx" required style="text-align: center;"><br>
+    <button type="submit">Upload Resume</button>
+</form>
+  </div>
+
+
+  <div class="containers">
+    <h2>Upload Resume (PDF) for Parsing</h2>
+    <input type="file" id="resumeFile" accept=".pdf,.docx" />
+    <button onclick="uploadResume()">Upload</button>
+    <pre id="result"></pre>
+  </div>
+
+  <!-- Popup elements -->
+
+
+ 
+</body>
+</html>
